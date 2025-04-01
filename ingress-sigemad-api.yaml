@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-sigemad-api
+  namespace: ns-sigemad
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # Eliminar o comentar la anotación rewrite-target
+    # nginx.ingress.kubernetes.io/rewrite-target: /api/$1
+spec:
+  rules:
+    - host: f0bc5767e225.ngrok.app
+      http:
+        paths:
+          - path: /swagger(/.*)?
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: svc-backend
+                port:
+                  number: 8080
+          - path: /(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: svc-backend
+                port:
+                  number: 8080

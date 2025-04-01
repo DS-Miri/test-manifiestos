@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geoserver
+  namespace: ns-sigemad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: geoserver
+  template:
+    metadata:
+      labels:
+        app: geoserver
+    spec:
+      containers:
+      - name: geoserver
+        image: docker.osgeo.org/geoserver:2.26.1
+        ports:
+          - containerPort: 8080
+        env:
+          - name: INSTALL_EXTENSIONS
+            value: "true"
+          - name: STABLE_EXTENSIONS
+            value: "sqlserver"
+          - name: GEOSERVER_ADMIN_USER
+            value: "admin"
+          - name: GEOSERVER_ADMIN_PASSWORD
+            value: "sigemad"
+          - name: PROXY_BASE_URL
+            value: "https://91de01098676.ngrok.app/geoserver"
+        volumeMounts:
+          - name: geoserver-data
+            mountPath: /opt/geoserver_data
+      volumes:
+        - name: geoserver-data
+          persistentVolumeClaim:
+            claimName: pvc-geoserver
